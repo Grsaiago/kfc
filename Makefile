@@ -13,7 +13,7 @@ GRUBDIR := $(BOOTDIR)/grub
 GRUB_CFG := $(GRUBDIR)/grub.cfg
 RUST_LIB := target/i386-kfc-none/release/librust_kernel.a
 
-.PHONY: all asm kernel iso clean
+.PHONY: all asm kernel iso clean help
 
 all: iso
 
@@ -57,3 +57,7 @@ clean:
 
 run: $(ISO)
 	qemu-system-i386 -cdrom $(ISO)
+
+help:
+	@echo "Use the Rust nightly toolchain."
+	@echo "Required tools: grub (with grub-file), mtools, and QEMU 6.1 or newer."
