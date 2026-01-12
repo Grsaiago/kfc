@@ -1,8 +1,8 @@
 #![no_std]
 #![no_main]
 
-const CHARS_PER_LINE: u8 = 80;
-const MAX_LINES: u8 = 25;
+// const CHARS_PER_LINE: u8 = 80;
+// const MAX_LINES: u8 = 25;
 const VGA_BUFFER_ADDRESS: u32 = 0xB8000;
 
 #[unsafe(no_mangle)]
@@ -13,10 +13,14 @@ pub extern "C" fn start() {
     let color_byte = 0x1f; // white foreground, blue background
 
     for (i, &char) in hello.into_iter().enumerate() {
-        let write_addr = (VGA_BUFFER_ADDRESS + i as u32) as *mut u8;
-        let character = char | (color_byte << 8);
+        // Each VGA character cell is 2 bytes: character byte + color byte
+        let offset = (i * 2) as u32;
+        let char_addr = (VGA_BUFFER_ADDRESS + offset) as *mut u8;
+        let color_addr = (VGA_BUFFER_ADDRESS + offset + 1) as *mut u8;
+
         unsafe {
-            core::ptr::write_volatile(write_addr, character);
+            core::ptr::write_volatile(char_addr, char);
+            core::ptr::write_volatile(color_addr, color_byte);
         }
     }
 
