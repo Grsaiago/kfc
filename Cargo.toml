@@ -7,8 +7,6 @@ edition = "2024"
 name = "rust_kernel"
 crate-type = ["staticlib"]
 
-[dependencies]
-
 
 [profile.dev]
 panic = "abort"
