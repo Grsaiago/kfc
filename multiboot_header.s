@@ -13,3 +13,26 @@ header_start:
     dw 0    ; flags
     dd 8    ; size
 header_end:
+
+section .bss
+align 16
+stack_bottom:
+    resb 16384  ; 16 KiB stack
+stack_top:
+
+section .text
+global start
+extern rust_start
+
+start:
+    ; Set up stack pointer
+    mov esp, stack_top
+
+    ; Call the Rust entry point
+    call rust_start
+
+    ; If rust_start returns, hang the system
+.hang:
+    cli
+    hlt
+    jmp .hang
