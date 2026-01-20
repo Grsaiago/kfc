@@ -34,8 +34,13 @@ pub extern "C" fn rust_start() -> ! {
     //     ),
     // ];
 
+    // Clear the screen to remove bootloader artifacts
+    frame_buffer.clear();
+
     // printf/printk behavior
-    let _ = write!(frame_buffer, "uma string qualquer");
+    for n in 0..80 {
+        let _ = write!(frame_buffer, "{}", n);
+    }
     // ATTENTION: we have a very small stack and no guard page
     // let hello = "Hello World!";
     // let color_byte = 0x1f; // white foreground, blue background
