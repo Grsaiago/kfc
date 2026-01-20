@@ -65,6 +65,9 @@ clean: ## Clean all transient dependencies, delete the kernel executable and the
 	rm -f $(KERNEL_BIN) $(ISO)
 	rm -f $(BOOTDIR)/kernel.bin
 
+.PHONY: fclean
+fclean: clean ## Clean all transient dependencies and delete the iso
+
 .PHONY: run
 run: $(ISO) ## Compile an run the ISO with qemu-system-1386
 	qemu-system-i386 -cdrom $(ISO)
