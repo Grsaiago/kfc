@@ -1,5 +1,3 @@
-.DEFAULT_GOAL := iso
-
 ASM_SRCS := $(wildcard *.s)
 OBJDIR := build/obj
 ASM_OBJS := $(patsubst %.s,$(OBJDIR)/%.o,$(ASM_SRCS))
@@ -13,13 +11,23 @@ GRUBDIR := $(BOOTDIR)/grub
 GRUB_CFG := $(GRUBDIR)/grub.cfg
 RUST_LIB := target/i386-kfc-none/release/librust_kernel.a
 
-.PHONY: all asm kernel iso clean help
 
-all: iso
+.PHONY: all
+all: help
 
+.PHONY: help
+help: ## Prints help for targets with comments
+	@echo "- Use Rust nightly."
+	@echo "- Required tools: grub (with grub-file), mtools, and QEMU 6.1 or newer."
+	@echo "Available Rules:"
+	@cat $(MAKEFILE_LIST) | grep -E '^[a-zA-Z_-]+:.*?## .*$$' | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+
+
+.PHONY: asm
 asm: $(ASM_OBJS)
 
-kernel: $(KERNEL_BIN)
+.PHONY: kernel
+kernel: $(KERNEL_BIN) ## Build the kernel executable
 
 $(OBJDIR):
 	mkdir -p $@
@@ -45,19 +53,18 @@ $(BOOTDIR)/kernel.bin: $(KERNEL_BIN) | $(BOOTDIR)
 $(GRUB_CFG): grub.cfg | $(GRUBDIR)
 	cp $< $@
 
-iso: $(ISO)
+.PHONY: iso
+iso: $(ISO) ## Build the kernel bootable iso
 
 $(ISO): $(BOOTDIR)/kernel.bin $(GRUB_CFG)
 	grub-mkrescue -o $@ $(ISODIR)
 
-clean:
+.PHONY: clean
+clean: ## Clean all transient dependencies, delete the kernel executable and the ISO
 	rm -rf $(OBJDIR)
 	rm -f $(KERNEL_BIN) $(ISO)
 	rm -f $(BOOTDIR)/kernel.bin
 
-run: $(ISO)
+.PHONY: run
+run: $(ISO) ## Compile an run the ISO with qemu-system-1386
 	qemu-system-i386 -cdrom $(ISO)
-
-help:
-	@echo "Use the Rust nightly toolchain."
-	@echo "Required tools: grub (with grub-file), mtools, and QEMU 6.1 or newer."
