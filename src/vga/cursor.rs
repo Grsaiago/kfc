@@ -1,7 +1,7 @@
 use crate::vga::{column::Column, row::Row};
 
 #[derive(Default, Debug, Clone, Copy)]
-pub struct VgaCursor {
+pub struct Cursor {
     row: Row,
     column: Column,
 }
@@ -14,7 +14,12 @@ out 0x3D4, 15      ; 15 tells the framebuffer to expect the lowest 8 bits of the
 out 0x3D5, 0x50    ; sending the lowest 8 bits of 0x0050
 */
 
-impl VgaCursor {
+impl Cursor {
+    pub const MIN_ROW: u8 = Row::MIN;
+    pub const MAX_ROW: u8 = Row::MAX;
+    pub const MIN_COLUMN: u8 = Column::MIN;
+    pub const MAX_COLUMN: u8 = Column::MAX;
+
     pub fn new() -> Self {
         Self::default()
     }
@@ -119,11 +124,6 @@ impl VgaCursor {
     /// Reset cursor to (0, 0)
     pub fn reset(&mut self) {
         *self = Self::default();
-    }
-
-    /// Get linear buffer offset for current cursor position
-    pub fn buffer_offset(&self) -> usize {
-        (self.row_u8() as usize * Column::MAX as usize + self.column_u8() as usize) * 2
     }
 
     /// Check if cursor is at the start of a line

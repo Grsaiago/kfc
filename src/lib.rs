@@ -1,43 +1,41 @@
 #![no_std]
 #![no_main]
 
-use crate::vga::{Char, CharColor, CharSliceExt, FrameBuffer, VgaColor};
+use crate::vga::FrameBuffer;
+use core::fmt::Write;
 
 mod vga;
 // const CHARS_PER_LINE: u8 = 80;
 // const MAX_LINES: u8 = 25;
-const VGA_BUFFER_ADDRESS: u32 = 0xB8000;
 
 #[unsafe(no_mangle)]
-pub extern "C" fn start() {
+pub extern "C" fn rust_start() -> ! {
     let mut frame_buffer = FrameBuffer::new();
-    let string = [
-        Char::new(
-            b'4',
-            CharColor::from_colors(VgaColor::Black, VgaColor::White),
-        ),
-        Char::new(
-            b'2',
-            CharColor::from_colors(VgaColor::Black, VgaColor::White),
-        ),
-        Char::new(
-            b'o',
-            CharColor::from_colors(VgaColor::Black, VgaColor::White),
-        ),
-        Char::new(
-            b'i',
-            CharColor::from_colors(VgaColor::Black, VgaColor::White),
-        ),
-        Char::new(
-            b'e',
-            CharColor::from_colors(VgaColor::Black, VgaColor::White),
-        ),
-    ];
+    // let string = [
+    //     Char::new(
+    //         b'4',
+    //         CharColor::from_colors(VgaColor::Black, VgaColor::White),
+    //     ),
+    //     Char::new(
+    //         b'2',
+    //         CharColor::from_colors(VgaColor::Black, VgaColor::White),
+    //     ),
+    //     Char::new(
+    //         b'o',
+    //         CharColor::from_colors(VgaColor::Black, VgaColor::White),
+    //     ),
+    //     Char::new(
+    //         b'i',
+    //         CharColor::from_colors(VgaColor::Black, VgaColor::White),
+    //     ),
+    //     Char::new(
+    //         b'e',
+    //         CharColor::from_colors(VgaColor::Black, VgaColor::White),
+    //     ),
+    // ];
 
     // printf/printk behavior
-    for c in &string {
-        write!(frame_buffer, "{}", string.as_vga_str());
-    }
+    let _ = write!(frame_buffer, "uma string qualquer");
     // ATTENTION: we have a very small stack and no guard page
     // let hello = "Hello World!";
     // let color_byte = 0x1f; // white foreground, blue background
@@ -53,6 +51,8 @@ pub extern "C" fn start() {
     //         core::ptr::write_volatile(color_addr, color_byte);
     //     }
     // }
+
+    loop {}
 }
 
 #[panic_handler]

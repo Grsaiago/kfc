@@ -26,6 +26,7 @@ impl Column {
     pub const MAX: u8 = 80;
 
     /// Get the column value
+    #[inline]
     pub const fn value(&self) -> u8 {
         self.0
     }
@@ -39,13 +40,23 @@ impl Column {
         }
     }
 
+    pub fn advance_truncated(&mut self) -> bool {
+        if self.0 < Self::MAX - 1 {
+            self.0 += 1;
+            false
+        } else {
+            true
+        }
+    }
+
+    /// Returns if the counter 'wrapped arround' or not
     pub fn advance_wrap(&mut self) -> bool {
         if self.0 < Self::MAX - 1 {
             self.0 += 1;
-            false // didn't wrap
+            false
         } else {
             self.0 = 0;
-            true // wrapped
+            true
         }
     }
 }

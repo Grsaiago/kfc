@@ -26,6 +26,7 @@ impl Row {
     pub const MAX: u8 = 25;
 
     /// Get the row value
+    #[inline]
     pub const fn value(&self) -> u8 {
         self.0
     }
@@ -39,12 +40,23 @@ impl Row {
         }
     }
 
-    pub fn increment(&mut self) -> Result<(), ()> {
+    pub fn advance_truncated(&mut self) -> bool {
         if self.0 < Self::MAX - 1 {
             self.0 += 1;
-            Ok(())
+            false
         } else {
-            Err(())
+            true
+        }
+    }
+
+    /// Returns if the counter 'wrapped arround' or not
+    pub fn advance_wrap(&mut self) -> bool {
+        if self.0 < Self::MAX - 1 {
+            self.0 += 1;
+            false
+        } else {
+            self.0 = 0;
+            true
         }
     }
 }

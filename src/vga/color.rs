@@ -70,6 +70,12 @@ impl Default for CharColor {
     }
 }
 
+impl From<CharColor> for u8 {
+    fn from(color: CharColor) -> u8 {
+        color.0
+    }
+}
+
 /// Where the first value is the background and the second one is the foreground
 impl From<(VgaColor, VgaColor)> for CharColor {
     fn from(value: (VgaColor, VgaColor)) -> Self {
