@@ -18,6 +18,19 @@ macro_rules! impl_try_from_for_column {
     };
 }
 
+macro_rules! impl_from_for_column {
+    ($($t:ty),* $(,)?) => {
+        $(
+            impl From<Column> for $t {
+                #[inline]
+                fn from(column: Column) -> Self {
+                    column.0 as $t
+                }
+            }
+        )*
+    };
+}
+
 #[derive(Default, Debug, Clone, Copy)]
 pub struct Column(u8);
 
@@ -30,35 +43,8 @@ impl Column {
     pub const fn value(&self) -> u8 {
         self.0
     }
-
-    /// Create a new Column (checked)
-    pub const fn new(value: u8) -> Option<Self> {
-        if value >= Self::MIN && value < Self::MAX {
-            Some(Column(value))
-        } else {
-            None
-        }
-    }
-
-    pub fn advance_truncated(&mut self) -> bool {
-        if self.0 < Self::MAX - 1 {
-            self.0 += 1;
-            false
-        } else {
-            true
-        }
-    }
-
-    /// Returns if the counter 'wrapped arround' or not
-    pub fn advance_wrap(&mut self) -> bool {
-        if self.0 < Self::MAX - 1 {
-            self.0 += 1;
-            false
-        } else {
-            self.0 = 0;
-            true
-        }
-    }
 }
 
 impl_try_from_for_column!(u8, i8, u16, i16, u32, i32, u64, i64);
+
+impl_from_for_column!(u8, i8, u16, i16, u32, i32, u64, i64);

@@ -18,6 +18,19 @@ macro_rules! impl_try_from_for_row {
     };
 }
 
+macro_rules! impl_from_for_row {
+    ($($t:ty),* $(,)?) => {
+        $(
+            impl From<Row> for $t {
+                #[inline]
+                fn from(column: Row) -> Self {
+                    column.0 as $t
+                }
+            }
+        )*
+    };
+}
+
 #[derive(Default, Debug, Clone, Copy)]
 pub struct Row(u8);
 
@@ -62,3 +75,4 @@ impl Row {
 }
 
 impl_try_from_for_row!(u8, i8, u16, i16, u32, i32, u64, i64);
+impl_from_for_row!(u8, i8, u16, i16, u32, i32, u64, i64);
