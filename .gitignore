@@ -1,4 +1,5 @@
 /target
 kfc.iso
 /build
-
+/isodir
+kernel.bin
